@@ -1,0 +1,301 @@
+﻿@model Ecommerce.Model.ItemTrans
+@{
+    var TotalCost = 0.0;
+    var CurrentStock = 0;
+    if (Model != null)
+    {
+        TotalCost = 0.0;
+        CurrentStock = 0;
+        TotalCost = Model.itemDetails.Cost * Model.item.StockIn;
+        CurrentStock = Model.item.Stock;
+    }
+
+}
+<br />
+<br />
+<br />
+@if (Model != null)
+{
+
+
+    <div class="alert alert-danger text-center" id="CannotId" style="display:none" role="alert">
+        Not enough stock!
+    </div>
+}
+else
+{
+    <div class="alert alert-danger text-center" id="CannotId" style="display:none" role="alert">
+        Please add positive numbers!
+    </div>
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(x => x.item.IsComsumed, new { @id = "IsConsumedId" })
+    @Html.HiddenFor(x => x.item.Id)
+    <div class="container-fluid">
+        @if (TempData["error"] != null)
+        {
+            <div class="alert alert-danger text-center" style="display:none" id="CannotId" role="alert">
+                @TempData["error"]
+            </div>
+        }
+        @Html.AntiForgeryToken()
+        @if (Model == null)
+        {
+            <button class="btn btn-success btn-sm float-right" formaction="@Url.Action("Create", "Item")" formmethod="post" type="submit" onclick="return IsPositiveNumber();">Save</button>
+        }
+        else
+        {
+
+            <div class="row float-right">
+                <div class="col-lg-6">
+                    <button class="btn btn-success btn-sm float-right" formaction="@Url.Action("Edit", "Item")" onclick="return Validate();" formmethod="post" type="submit">Update</button>
+                </div>
+                <div class="col-lg-6">
+                    <button class="btn btn-danger btn-sm float-right" id="deleteId" onclick="return ByPassValidation()" name="DeleteBtn" value="@Model.item.Id" formaction="@Url.Action("Delete", "Item")" formmethod="post" type="submit">Delete</button>
+                </div>
+
+
+            </div>
+        }
+        <br />
+        <br />
+        <div class="clearfix"></div>
+        <div class="clearfix"></div>
+        @if (Model != null)
+        {
+            <div class="card float-right" style="width: 18rem;">
+
+                <div class="card-body align-middle bg-transparent">
+                    <h6 class="card-title text-center">Stock Info</h6>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Stock  @Model.item.Stock</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Comsumption  @Model.item.StockOut</label>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Cost @Model.itemDetails.Cost</label>
+                            <label>Total @TotalCost</label>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+
+        }
+
+        <div class="clearfix"></div>
+        <div class="form-group">
+            @if (Model != null)
+            {
+                <div class="row">
+
+                    <div class="col-2">
+                        @Html.Label("Add Stock", "Add to stock", new { @style = "font-weight: bold;" })
+                        @Html.CheckBox("StockName", false, new { @id = "CheckStockId", @onChange = "CheckBoxCheck()" })
+                    </div>
+                </div>
+            }
+            <div class="row">
+
+
+
+                @if (Model == null)
+                {
+                    <div class="col-md-2">
+                        @Html.Label("Category Name", "Category Name", new { @style = "font-weight: bold;" })
+                        @Html.DropDownList("item.ItemCategoryId", new SelectList(ViewBag.ItemCategory, "Value", "Text"), "--Select--", new { @style = "width: 150px;height: 28px;", @required = "required" })
+                        @Html.ValidationMessageFor(x => x.item.ItemCategoryId)
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-2">
+                        @Html.Label("Category Name", "Category Name", new { @style = "font-weight: bold;" })
+                        @Html.DropDownList("item.ItemCategoryId", new SelectList(ViewBag.ItemCategory, "Value", "Text"), "--Select--", new { @style = "width: 150px;height: 28px;", @disabled = "disabled" })
+                        @Html.ValidationMessageFor(x => x.item.ItemCategoryId)
+                    </div>
+                }
+
+                @if (Model != null)
+                {
+                    <div class="col-md-3">
+                        @Html.Label("Item Name", "Item Name", new { @style = "font-weight: bold;" })
+                        @Html.TextBoxFor(x => x.item.Name, "", new { @minlength = "1", @maxlength = "20", @disabled = "disabled" })
+                        @Html.ValidationMessageFor(x => x.item.Name)
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-3">
+                        @Html.Label("Item Name", "Item Name", new { @style = "font-weight: bold;" })
+                        @Html.TextBoxFor(x => x.item.Name, "", new { @minlength = "1", @maxlength = "20", @required = "required" })
+                        @Html.ValidationMessageFor(x => x.item.Name)
+                    </div>
+                }
+                @if (Model == null)
+                {
+                    <div class="col-md-1">
+                        @Html.Label("Available Stock", "Cost", new { @style = "font-weight: bold;" })
+                        <input type="number" step="0.01" minlength="1" name="itemDetails.Cost" maxlength="6" id="CostId" style="width: 80px;" required />
+                        @Html.ValidationMessageFor(x => x.itemDetails.Cost)
+                    </div>
+                }
+                <div class="col-md-2">
+                    @Html.Label("Available Stock", "Add to stocks", new { @style = "font-weight: bold;" })
+                    <input type="number" minlength="1" name="item.StockIn" maxlength="6" id="StockAddId" disabled style="width: 80px;" required />
+                    @Html.ValidationMessageFor(x => x.item.StockIn)
+                </div>
+
+                @if (Model != null)
+                {
+                    <div class="col-md-2">
+                        @Html.Label("Item Cost", "Consume from stock", new { @style = "font-weight: bold;" })
+                        <input type="number" minlength="1" name="item.StockOut" maxlength="20" id="ComsumeId" required style="width: 80px;" />
+                        @Html.ValidationMessageFor(x => x.item.StockOut)
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+        @Html.ActionLink("Back", "Index", "Item")
+    </div>
+}
+
+@section Scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            debugger;
+
+
+             @if (TempData["error"] != null) {
+             @Html.Raw(" $('#CannotId').show(); setTimeout(Message, 3000);");
+            }
+            $('#IsConsumedId').val(true);
+            @if (Model == null)
+            {
+
+                @Html.Raw("$('#StockAddId').attr('disabled', false)")
+
+            }
+
+            });
+            function Message() {
+
+                $("#CannotId").hide()
+            }
+        function CheckBoxCheck() {
+            debugger;
+            if ($('#CheckStockId').is(":Checked")) {
+                $('#StockAddId').attr("disabled", false)
+                $('#ComsumeId').val(0)
+                $('#IsConsumedId').val(false);
+                $('#ComsumeId').attr("disabled", true)
+            } else {
+                $('#StockAddId').attr("disabled", true)
+                $('#ComsumeId').attr("disabled", false)
+                $('#StockAddId').val(0)
+
+            }
+            }
+
+            function ValidateAddStockAndConsumeStock()
+            {
+                var StockAdd = parseFloat($('#StockAddId').val());
+                var Comsume = parseInt($('#ComsumeId').val());
+                if ($('#CheckStockId').is(":Checked")) {
+                    if (StockAdd < 1) {
+                        $('#CannotId').text('Please add Cost and Stock in Postive no.');
+                        $('#CannotId').show();
+                        setTimeout(function () {
+                            $('#CannotId').fadeOut('fast');
+                        }, 3000);
+                        return false;
+                    }
+                } else
+                {
+                    if (Comsume < 1) {
+                        $('#CannotId').text('Please add Cost and Stock in Postive no.');
+                        $('#CannotId').show();
+                        setTimeout(function () {
+                            $('#CannotId').fadeOut('fast');
+                        }, 3000);
+                        return false;
+                    }
+                }
+                return true;
+            }
+            function Validate() {
+                debugger;
+
+                    let stock = parseInt('@CurrentStock');
+                    let Addstock = $('#StockAddId').val()
+                    let IsValid = false;
+                    let str = $('#ComsumeId').val();
+                    if (stock >= parseInt($('#ComsumeId').val()) && str != "" && (stock != 0 || $('#CheckStockId').is(":Checked")) && (Addstock != 0 || $('#CheckStockId').is(":Checked") == false)) {
+                        IsValid = true;
+                    } else {
+                        if (str == "") {
+                            if ($('#CheckStockId').is(":Checked")) {
+                                $('#CannotId').text('Please add stock or comsume Stock')
+                            }
+
+                            $('#CannotId').show()
+                            setTimeout(function () {
+                                $('#CannotId').fadeOut('fast');
+                            }, 3000);
+                        } else {
+                            $('#CannotId').text('Not enough stock!')
+                            $('#CannotId').show()
+                            setTimeout(function () {
+                                $('#CannotId').fadeOut('fast');
+                            }, 3000);
+                        }
+                     }
+                return (IsValid && ValidateAddStockAndConsumeStock());
+
+            }
+
+            function ByPassValidation()
+            {
+                let IsValid = false;
+                $('#ComsumeId').attr("required",false)
+            }
+
+
+            function IsPositiveNumber()
+            {
+                debugger;
+                var number = parseFloat($('#CostId').val());
+                var number1 = parseInt( $('#StockAddId').val());
+                if (number > 0 && number1>0) {
+                    return true;
+                } else
+                {
+                    $('#CannotId').show()
+                    setTimeout(function () {
+                        $('#CannotId').fadeOut('fast');
+                    }, 3000);
+                    return false;
+                }
+
+            }
+    </script>
+
+}
+
+
+

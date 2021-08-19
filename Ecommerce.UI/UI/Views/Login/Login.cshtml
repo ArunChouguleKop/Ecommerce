@@ -1,0 +1,85 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Ecommerce.Model.User
+<style>
+</style>
+<body>
+    <div class="container-fluid">
+        <div class="text-center">
+            <h5>eShop</h5>
+        </div>
+        <div class="container">
+            @if (Model != null)
+            {
+                if (Model.Errors.Count > 0)
+                {
+                    <div class="alert alert-danger text-center" style="display:none" id="CannotId" role="alert">
+                        @Model.Errors.FirstOrDefault()
+                    </div>
+                }
+
+            }
+            @if(TempData["error"] != null)
+            {
+                <div class="alert alert-danger text-center" style="display:none" id="CannotId" role="alert">
+                    @TempData["error"]
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                    <div class="card card-signin my-5">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Login</h5>
+                            @using (Html.BeginForm())
+                            {
+
+                                <div class="form-label-group">
+                                    <label>Username</label>
+                                    @Html.TextBoxFor(x => x.UserName, "", new { @class = "form-control", @placeholder = "Username", @required = "@required" })
+                                </div>
+
+                                <div class="form-label-group">
+                                    <label for="inputPassword">Password</label>
+                                    @Html.TextBoxFor(x => x.Password, "", new { @class = "form-control", @placeholder = "Password", @required = "@required", @type = "Password" })
+                                </div>
+
+
+                                <button class="btn btn-lg btn-primary btn-block text-uppercase" formaction="@Url.Action("Login", "Login")" formmethod="post" type="submit">Login</button>
+                                <hr class="my-4">
+
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+       @if (Model != null)
+       {
+           if (Model.Errors.Count > 0)
+           {
+               @Html.Raw(" $('#CannotId').show(); setTimeout(Message, 3000);");
+           }
+       }
+            @if (TempData["error"] != null) {
+             @Html.Raw(" $('#CannotId').show(); setTimeout(Message, 3000);");
+            }
+});
+
+        function Message() {
+
+            $("#CannotId").hide()
+        }
+    </script>
+}

@@ -1,0 +1,93 @@
+-- Database: ecommerce
+
+-- DROP DATABASE ecommerce;
+
+CREATE DATABASE ecommerce
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'English_India.1252'
+    LC_CTYPE = 'English_India.1252'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+-- Table: public.user
+
+-- DROP TABLE public."user";
+
+CREATE TABLE public."user"
+(
+    id uuid NOT NULL,
+    username character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    isadmin boolean NOT NULL,
+    isactive boolean NOT NULL,
+    CONSTRAINT "Login_pkey" PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."user"
+    OWNER to postgres;
+
+
+-- Table: public.item
+
+-- DROP TABLE public.item;
+
+CREATE TABLE public.item
+(
+    id uuid NOT NULL,
+    itemname character varying COLLATE pg_catalog."default" NOT NULL,
+    itemcategoryid uuid NOT NULL,
+    isactive boolean NOT NULL,
+    stockin bigint,
+    stockout bigint,
+    CONSTRAINT itemdemo_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.item
+    OWNER to postgres;
+
+
+-- Table: public.itemcategory
+
+-- DROP TABLE public.itemcategory;
+
+CREATE TABLE public.itemcategory
+(
+    id uuid NOT NULL,
+    categoryname character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    isactive boolean,
+    CONSTRAINT itemcategorydemo_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.itemcategory
+    OWNER to postgres;
+
+-- Table: public.itemdetails
+
+-- DROP TABLE public.itemdetails;
+
+CREATE TABLE public.itemdetails
+(
+    id uuid NOT NULL,
+    itemid uuid NOT NULL,
+    price double precision,
+    isactive boolean NOT NULL
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.itemdetails
+    OWNER to postgres;
+
+
+INSERT INTO public.user(
+	id, username, password, isadmin, isactive)
+	VALUES ('963ad2b2-ffc3-4d6e-93ed-75681a98e0e1', 'admin', 'admin', true, true);
+

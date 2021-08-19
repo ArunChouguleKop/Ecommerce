@@ -1,0 +1,102 @@
+﻿@model IEnumerable<Ecommerce.Model.ItemCategory>
+    <style>
+        .itemCategory {
+            margin-left: -140px;
+            margin-bottom: -105px;
+        }
+    </style>
+    <div class="container-fluid">
+        @if ((bool)TempData["Saved"])
+        {
+
+            <div class="alert alert-success text-center" id="SavedId" role="alert">
+                Saved successfully!
+            </div>
+        }
+        @if ((bool)TempData["Update"])
+        {
+
+            <div class="alert alert-success text-center" id="UpdateId" role="alert">
+                Updated successfully!
+            </div>
+        }
+        @if ((bool)TempData["Delete"])
+        {
+
+            <div class="alert alert-success text-center" id="DeleteId" role="alert">
+                Deleted successfully!
+            </div>
+        }
+        @if ((bool)TempData["Cannot"])
+        {
+
+            <div class="alert alert-danger text-center" id="CannotId" role="alert">
+                cannot delete or update item listed under this category
+            </div>
+        }
+
+        <h3>Item Category</h3>
+        <div class="clearfix"></div>
+        <div class="col-2 float-lg-right">
+            <div>
+
+                <a class="btn btn-success float-lg-left" href="@Url.Action("Index","Item")" style="margin-top: 24px;">Item</a>
+            </div>
+            &nbsp;  &nbsp;
+            <div> 
+
+                <a class="btn btn-danger float-lg-right" href="@Url.Action("UserLogin","Login")">Logout</a>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <br />
+        <div>
+            <a class="btn btn-primary" href="@Url.Action("Create","ItemCategory")">Create</a>
+        </div>
+        <br />
+
+        <table class="table">
+            <thead>
+                <tr>
+
+                    <th scope="col" class="text-center">Item Category</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@item.Name</th>
+                            <th scope="row">@Html.ActionLink("Edit", "Edit", new { id = @item.Id })</th>
+
+
+                        </tr>
+
+                    }
+                }
+
+
+            </tbody>
+        </table>
+    </div>
+
+@section Scripts{
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        setTimeout(Message, 3000);
+    });
+    function Message() {
+        $("#SavedId").hide()
+        $("#UpdateId").hide()
+        $("#DeleteId").hide()
+        $("#CannotId").hide()
+    }
+   
+</script>
+}
